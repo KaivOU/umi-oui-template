@@ -9,6 +9,7 @@ node: v18+
 yarn
 
 // v18 or v16
+// v18需加上cross-env NODE_OPTIONS=--openssl-legacy-provider 
 npm run start
 
 ```

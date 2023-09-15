@@ -1,8 +1,7 @@
 export default {
     dev: {
         '/api': {
-            // target: 'http://fotile-dashboard.yuntai-internal.mlamp.cn/',
-            target: 'https://fotile-dashboard-test.miaozhen.com/',
+            target: 'https://xxx/',
             changeOrigin: true,
             // 默认情况下不接收转发到https的服务器上，如果希望支持，可以设置为false
             secure: false,
