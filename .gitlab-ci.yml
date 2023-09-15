@@ -1,0 +1,175 @@
+default:
+  image: node:16.13.1
+
+variables:
+  GIT_CLEAN_FLAGS: 'none'
+  USER: master
+  SSH_PORT: 58404
+  BASE_JAR_DIR: /data1/artifacts
+  BASE_ART_DIR: /data1/artifacts
+  BASE_LOG_DIR: /data1/logs
+
+  TEST_HOST_BACKEND_01: 10.11.111.12
+  TEST_HOST_FRONTEND_01: 10.11.111.12
+  PROD_HOST_BACKEND_01: 10.11.111.13
+  PROD_HOST_FRONTEND_01: 10.11.111.11
+
+  CI_DEBUG_TRACE: 'false'
+
+  LOG_DIR: '$BASE_LOG_DIR/$CI_PROJECT_NAME'
+  APP_DIR: '$BASE_ART_DIR/$CI_PROJECT_NAME'
+  VER_DIR: '$BASE_ART_DIR/$CI_PROJECT_NAME/$CI_COMMIT_SHORT_SHA'
+
+  WECOM_ROBOT_KEY: '5a41bc66-585b-4118-b04d-f2b2c3bc779e'
+
+stages:
+  - clean
+  - install
+  - build
+  - deploy
+  - notify
+
+clean-job:
+  stage: clean
+  tags:
+    - titan
+  script:
+    - rm -rf node_modules
+  only:
+    variables:
+      - $FORCE_INSTALL == "true"
+
+install-job:
+  stage: install
+  tags:
+    - titan
+  script:
+    - echo 'ooOoo install'
+    #        - rm -rf .yarn/cache
+    #        - ln -s /root/.yarn/berry/cache  .yarn/cache
+    - yarn || yarn install --registry https://registry.npm.taobao.org/
+  only:
+    refs:
+      - tags
+      - prod
+      - master
+      - test
+      - /^release\/.*/
+      - /^patch\/.*/
+      - /^hotfix\/.*/
+    changes:
+      - package.json
+      - yarn.lock
+      - .yarnrc.yml
+      - .gitlab-ci.yml
+
+build-release-job:
+  stage: build
+  tags:
+    - titan
+  script:
+    - yarn build
+  only:
+    - test
+    - /^release\/.*/
+    - /^patch\/.*/
+    - /^hotfix\/.*/
+
+build-prod-job:
+  stage: build
+  tags:
+    - titan
+  script:
+    - yarn build
+  only:
+    - tags
+    - prod
+
+.deploy-job: &deploy-job
+  script:
+    - ssh -p ${SSH_PORT} ${USER}@${DEPLOY_SERVER} "mkdir -p $VER_DIR"
+    - scp -P $SSH_PORT -r ./dist/www/* $USER@$DEPLOY_SERVER:$VER_DIR
+    - ssh -p ${SSH_PORT} ${USER}@${DEPLOY_SERVER} "rm $APP_DIR/current; ln -s $VER_DIR $APP_DIR/current"
+
+deploy-uat-job:
+  stage: deploy
+  variables:
+    DEPLOY_SERVER: $TEST_HOST_FRONTEND_01
+  tags:
+    - titan
+  only:
+    - test
+    - /^release\/.*/
+    - /^patch\/.*/
+    - /^hotfix\/.*/
+  <<: *deploy-job
+
+deploy-prod-job:
+  stage: deploy
+  variables:
+    DEPLOY_SERVER: $PROD_HOST_FRONTEND_01
+  tags:
+    - titan
+  only:
+    - master
+    - prod
+  script:
+    - mkdir -p $VER_DIR
+    - cp -r ./dist/www/* $VER_DIR
+    - rm -rf $APP_DIR/current
+    - ln -s $VER_DIR $APP_DIR/current
+
+notify-job-when-success:
+  stage: notify
+  script:
+    - |
+      curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${WECOM_ROBOT_KEY}" -H 'Content-Type:application/json' -d "
+      {
+        \"msgtype\": \"markdown\",
+        \"markdown\": {
+          \"content\": \"项目名称：${CI_PROJECT_NAME}\n>项目构建结果：<font color=\\\"info\\\">成功</font>\n>本次构建由：${GITLAB_USER_NAME} 触发\n>提交号：${CI_COMMIT_SHA}\n>提交日志：${CI_COMMIT_MESSAGE}\n>构建分支：${CI_COMMIT_REF_NAME}\n>流水线地址：[${CI_PIPELINE_URL}](${CI_PIPELINE_URL})\"
+        }
+      }"
+  tags:
+    - titan
+  only:
+    - tags
+    - prod
+    - master
+    - test
+    - /^release\/.*/
+    - /^patch\/.*/
+    - /^hotfix\/.*/
+  when: on_success
+
+notify-job-when-fail:
+  stage: notify
+  script:
+    - echo 'fail'
+    - export USER_MOBILE=$(curl "http://account-prod.internal.biateam.com/services/internal/devops/get-mobile-by-email?email=${GITLAB_USER_EMAIL}")
+    - |
+      curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${WECOM_ROBOT_KEY}" -H 'Content-Type:application/json' -d "
+      {
+        \"msgtype\": \"text\",
+        \"text\": {
+          \"mentioned_mobile_list\":[\"${USER_MOBILE}\"]
+        }
+      }"
+    - |
+      curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${WECOM_ROBOT_KEY}" -H 'Content-Type:application/json' -d "
+      {
+        \"msgtype\": \"markdown\",
+        \"markdown\": {
+          \"content\": \"项目名称：${CI_PROJECT_NAME}\n>项目构建结果：<font color=\\\"warning\\\">失败</font>\n>本次构建由：${GITLAB_USER_NAME} 触发\n>提交号：${CI_COMMIT_SHA}\n>提交日志：${CI_COMMIT_MESSAGE}\n>构建分支：${CI_COMMIT_REF_NAME}\n>流水线地址：[${CI_PIPELINE_URL}](${CI_PIPELINE_URL})\"
+        }
+      }"
+  tags:
+    - titan
+  only:
+    - master
+    - test
+    - prod
+    - /^release\/.*/
+    - /^patch\/.*/
+    - /^hotfix\/.*/
+  when: on_failure

@@ -1,0 +1,49 @@
+{
+    "compilerOptions": {
+        // 指定 ECMAScript 目标版本: 'ES3' (default), 'ES5', 'ES6'/'ES2015', 'ES2016',
+        "target": "es6",
+        // 指定使用模块: 'commonjs', 'amd', 'system', 'umd' or 'es2015'
+        "module": "commonjs",
+        // 选择模块解析策略： 'node' (Node.js) or 'classic' (TypeScript pre-1.6)
+        "moduleResolution": "node",
+        // 从 tslib 导入辅助工具函数
+        "importHelpers": true,
+        // 指定 jsx 代码的生成: 'preserve', 'react-native', or 'react'
+        "jsx": "react-jsx",
+        "jsx": "react",
+        // 允许编译 javascript 文件
+        // "allowJs": true,
+        // 指定要包含在编译中的库文件
+        "lib": ["ES6", "ES7", "ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
+        // 允许export={}导出，不需要default，由import from导入,可按照es6模块规范导入CommonJS模块
+        "esModuleInterop": true,
+        // 生成相应的 '.map' 文件
+        "sourceMap": true,
+        // 启用装饰器 (used)
+        "experimentalDecorators": true,
+        // 允许从没有设置默认导出的模块中默认导入。
+        "allowSyntheticDefaultImports": true,
+        // 删除编译后的所有的注释
+        "removeComments": false,
+        // 跳过对所有.d.ts文件的类型检查
+        "skipLibCheck": true,
+        // 不允许隐式的 any 类型, false 允许 (used)
+        "noImplicitAny": false,
+        // 启用严格的 null 检查-false禁止隐式具有any类型
+        "strictNullChecks": false,
+        // 需要包含的类型声明文件名列表
+        "types": ["node"],
+        // 启用导入.json文件
+        "resolveJsonModule": true,
+        // 用于解析非相对模块名称的基目录
+        "baseUrl": "./",
+        // 模块名到基于 baseUrl 的路径映射的列表别名，依赖启动resolveJsonModule
+        "paths": {
+            "@/*": ["src/*"],
+            "@@/*": ["src/.umi/*"]
+        }
+    },
+    // /指定被编译文件所在的目录
+    "include": ["src/**/*", "config/**/*", "typings/*"],
+    "exclude": ["node_modules", "lib", "es", "dist", "test", "docs", "tests"]
+}

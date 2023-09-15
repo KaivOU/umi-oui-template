@@ -1,0 +1,92 @@
+.content-main-back {
+    height: 100%;
+    width: 100%;
+    // min-height: calc(100vh - 60px);
+    background-color: #000;
+}
+// 头部
+.page-header {
+    height: 60px;
+    padding: 0 20px 0 40px;
+    border-bottom: 1px solid rgba(0, 0, 0, 10%);
+    background: #fff;
+
+    .user {
+        color: var(--warm-grey-65, #725962);
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 20px;
+        margin-right: 36px;
+    }
+}
+// 侧边栏菜单样式
+.menu-side {
+    // height: 100%;
+    // background-color: #000000;
+    .ant-menu {
+        // height: 100%;
+        border-inline-end: none !important;
+
+        .ant-menu-title-content {
+            margin-left: 8px;
+        }
+    }
+
+    .ant-menu-item-selected {
+        border-radius: 0;
+        background: #AA001A;
+    }
+
+    .ant-menu-submenu-selected .ant-menu-submenu-title .side-item,
+    .ant-menu-submenu-selected .ant-menu-submenu-title .ant-menu-submenu-arrow,
+    .ant-menu-item-selected .side-item {
+        color: #FFF;
+    }
+
+    .ant-menu-submenu-selected .ant-menu-submenu-title {
+        &:hover {
+            color: var(--red-06, #ff2442) !important;
+        }
+    }
+
+    .ant-menu-inline {
+        background: #000 !important;
+    }
+
+    .ant-menu-inline .ant-menu-item,
+    .ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+        height: 68px;
+        line-height: 68px;
+        margin: 0 auto;
+    }
+
+    .side-item {
+        height: 68px;
+        width: 100%;
+        line-height: 68px;
+        color: rgba(255,255,255,65%);
+        font-family: Poppins;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+    }
+}
+// 右侧
+.content-main-right {
+    min-height: calc(100vh - 40px);
+    background: #f5f5f5;
+    height: 100%;
+
+    .content-main-head {
+        height: 32px;
+        margin: 16px 24px 0;
+    }
+
+    .content-main-inner {
+        height: calc(100% - 56px);
+        margin: 0 24px;
+        // position: sticky;
+        // top: 80px;
+        // overflow-y: scroll
+    }
+}

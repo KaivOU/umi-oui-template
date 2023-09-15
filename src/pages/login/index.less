@@ -1,0 +1,107 @@
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.login {
+    width: 100%;
+    height: 100%;
+    min-height: 868px;
+    display: flex;
+    justify-content: space-between;
+    // background: url("./assets/背景图.png") no-repeat center center / cover;
+
+    .login-right {
+        width: 800px;
+        background: rgba(0, 0, 0, 10%);
+        border-radius: 8px;
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            :global {
+                .ant-form-item {
+                    margin: 0;
+                    padding: 0;
+    
+                    .ant-input-affix-wrapper {
+                        padding: 0 8px;
+    
+                        .ant-input-prefix {
+                            margin-right: 14px;
+                        }
+                    }
+                }
+            }
+
+            .user-name,
+            .password,
+            .button {
+                font-size: 18px;
+                width: 360px;
+                height: 56px;
+                border-radius: 8px;
+            }
+
+            .user-name,
+            .password {
+                opacity: 0.8;
+            }
+
+            .title,
+            .footer {
+                display: block;
+                color: #fff;
+            }
+
+            .logo {
+                margin-top: 132px;
+            }
+
+            .title {
+                width: 344px;
+                height: 26px;
+                font-size: 20px;
+                font-family:
+                    Arial,
+                    sans-serif,
+                    "Microsoft YaHei-Regular",
+                    "Microsoft YaHei";
+                line-height: 1;
+                margin-top: 29px;
+                text-align: justify;
+                text-align-last: justify;
+            }
+
+            .user-name {
+                margin-top: 142px;
+            }
+
+            .password {
+                margin-top: 36px;
+            }
+
+            .button {
+                font-size: 20px;
+                margin-top: 50px;
+                background-color: rgba(161, 3, 24, 93%);
+            }
+
+            .footer {
+                margin-top: 232px;
+                width: 485px;
+                height: 16px;
+                font-size: 14px;
+                font-family: Arial-Regular, Arial, sans-serif;
+                line-height: 1;
+                text-align: center;
+                text-align-last: center;
+            }
+        }
+    }
+}
